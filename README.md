@@ -374,12 +374,11 @@ The compiled APK will be located at:
 
 ## 🔑 Credentials & Testing Guide
 
-For quick evaluation and testing, the application comes with built-in test accounts:
+For quick evaluation and testing, the application comes with a pre-configured demo account:
 
-| Role | Email / Identifier | Password | Access Level |
+| Account | Email / Identifier | Password | Access Level |
 |---|---|---|---|
 | **Demo User** | `demo@bid.ai` | `password123` | Full Buyer / Seller Access |
-| **Test Admin** | `admin@bid.ai` | `admin123` | Full Access + Elevated Eco Score |
 
 ### Quick Smoke Test Checklist:
 - [x] **Login:** Login with `demo@bid.ai` / `password123` or register a new account.
