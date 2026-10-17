@@ -16,10 +16,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,7 +83,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(36.dp))
 
             if (form.isRegisterMode) {
-                // SIGN UP SCREEN (Image 1 from Figma)
+                // SIGN UP SCREEN (Image 4 from Figma)
                 Text(
                     text = "Join BID.ai",
                     fontSize = 24.sp,
@@ -145,9 +150,18 @@ fun LoginScreen(
                     value = form.password,
                     onValueChange = { viewModel.onPasswordChange(it) },
                     placeholder = "**** ****",
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (form.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     isError = form.passwordError != null,
-                    errorMessage = form.passwordError
+                    errorMessage = form.passwordError,
+                    trailingIcon = {
+                        IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
+                            Icon(
+                                imageVector = if (form.isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                contentDescription = "Toggle password visibility",
+                                tint = TextGray
+                            )
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -155,10 +169,12 @@ fun LoginScreen(
                 // Confirm Password field
                 FigmaTextField(
                     label = "Confirm Password",
-                    value = form.password,
-                    onValueChange = { viewModel.onPasswordChange(it) },
+                    value = form.confirmPassword,
+                    onValueChange = { viewModel.onConfirmPasswordChange(it) },
                     placeholder = "**** ****",
-                    visualTransformation = PasswordVisualTransformation()
+                    visualTransformation = if (form.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    isError = form.confirmPasswordError != null,
+                    errorMessage = form.confirmPasswordError
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -213,7 +229,7 @@ fun LoginScreen(
                 }
 
             } else {
-                // SIGN IN SCREEN (Image 2 from Figma)
+                // SIGN IN SCREEN (Image 3 from Figma)
                 Text(
                     text = "Welcome Back  to Bid.ai",
                     fontSize = 24.sp,
@@ -249,10 +265,19 @@ fun LoginScreen(
                     label = "Password",
                     value = form.password,
                     onValueChange = { viewModel.onPasswordChange(it) },
-                    placeholder = "abcd@gmail.com",
-                    visualTransformation = PasswordVisualTransformation(),
+                    placeholder = "••••••••",
+                    visualTransformation = if (form.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     isError = form.passwordError != null,
-                    errorMessage = form.passwordError
+                    errorMessage = form.passwordError,
+                    trailingIcon = {
+                        IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
+                            Icon(
+                                imageVector = if (form.isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                contentDescription = "Toggle password visibility",
+                                tint = TextGray
+                            )
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
@@ -311,3 +336,4 @@ fun LoginScreen(
         }
     }
 }
+

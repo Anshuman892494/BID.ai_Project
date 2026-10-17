@@ -24,10 +24,12 @@ data class AuthFormState(
     val email: String = "demo@bid.ai", // Prefilled for swift evaluator demo
     val phone: String = "+919876543210",
     val password: String = "password123", // Prefilled for demo
+    val confirmPassword: String = "password123",
     val isPasswordVisible: Boolean = false,
     val fullNameError: String? = null,
     val emailError: String? = null,
-    val passwordError: String? = null
+    val passwordError: String? = null,
+    val confirmPasswordError: String? = null
 )
 
 class AuthViewModel(private val context: Context) : ViewModel() {
@@ -57,13 +59,18 @@ class AuthViewModel(private val context: Context) : ViewModel() {
         _formState.update { it.copy(password = value, passwordError = null) }
     }
 
+    fun onConfirmPasswordChange(value: String) {
+        _formState.update { it.copy(confirmPassword = value, confirmPasswordError = null) }
+    }
+
     fun toggleRegisterMode() {
         _formState.update {
             it.copy(
                 isRegisterMode = !it.isRegisterMode,
                 fullNameError = null,
                 emailError = null,
-                passwordError = null
+                passwordError = null,
+                confirmPasswordError = null
             )
         }
         _uiState.value = AuthUiState.Idle
@@ -89,6 +96,11 @@ class AuthViewModel(private val context: Context) : ViewModel() {
 
         if (!ValidationUtils.isValidPassword(form.password)) {
             _formState.update { it.copy(passwordError = "Password must be at least 6 characters") }
+            hasError = true
+        }
+
+        if (form.isRegisterMode && form.password != form.confirmPassword) {
+            _formState.update { it.copy(confirmPasswordError = "Passwords do not match") }
             hasError = true
         }
 
@@ -123,3 +135,4 @@ class AuthViewModel(private val context: Context) : ViewModel() {
         }
     }
 }
+

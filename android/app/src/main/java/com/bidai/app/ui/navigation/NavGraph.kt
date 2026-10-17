@@ -2,6 +2,8 @@ package com.bidai.app.ui.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,6 +22,19 @@ object ScreenRoutes {
     const val SELL = "sell"
 }
 
+@Suppress("UNCHECKED_CAST")
+class AppViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val appContext = context.applicationContext
+        return when {
+            modelClass.isAssignableFrom(AuthViewModel::class.java) -> AuthViewModel(appContext) as T
+            modelClass.isAssignableFrom(HomeViewModel::class.java) -> HomeViewModel(appContext) as T
+            modelClass.isAssignableFrom(SellViewModel::class.java) -> SellViewModel(appContext) as T
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    }
+}
+
 @Composable
 fun BidAiNavGraph(
     navController: NavHostController,
@@ -27,13 +42,14 @@ fun BidAiNavGraph(
 ) {
     val tokenManager = TokenManager.getInstance(context)
     val startDestination = if (tokenManager.isLoggedIn()) ScreenRoutes.HOME else ScreenRoutes.LOGIN
+    val factory = AppViewModelFactory(context)
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
         composable(ScreenRoutes.LOGIN) {
-            val authViewModel = AuthViewModel(context)
+            val authViewModel: AuthViewModel = viewModel(factory = factory)
             LoginScreen(
                 viewModel = authViewModel,
                 onAuthSuccess = {
@@ -45,7 +61,7 @@ fun BidAiNavGraph(
         }
 
         composable(ScreenRoutes.HOME) {
-            val homeViewModel = HomeViewModel(context)
+            val homeViewModel: HomeViewModel = viewModel(factory = factory)
             HomeScreen(
                 viewModel = homeViewModel,
                 onNavigateToSell = {
@@ -61,7 +77,7 @@ fun BidAiNavGraph(
         }
 
         composable(ScreenRoutes.SELL) {
-            val sellViewModel = SellViewModel(context)
+            val sellViewModel: SellViewModel = viewModel(factory = factory)
             OneClickSellScreen(
                 viewModel = sellViewModel,
                 onNavigateBack = {
@@ -76,3 +92,4 @@ fun BidAiNavGraph(
         }
     }
 }
+

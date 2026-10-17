@@ -193,7 +193,14 @@ fun OneClickSellScreen(
                 Pair(5, "Bikes" to "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=100&q=80"),
                 Pair(6, "Electronics" to "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&q=80"),
                 Pair(7, "Home & Garden" to "https://images.unsplash.com/photo-1580481077195-c3a82145d875?w=100&q=80"),
-                Pair(8, "Beauty" to "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=100&q=80")
+                Pair(8, "Beauty" to "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=100&q=80"),
+                Pair(9, "Clothing" to "https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=100&q=80"),
+                Pair(10, "Books" to "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=100&q=80"),
+                Pair(11, "Arts and Crafts" to "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=100&q=80"),
+                Pair(12, "Services" to "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=100&q=80"),
+                Pair(13, "General Service" to "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100&q=80"),
+                Pair(14, "Yodha" to "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=100&q=80"),
+                Pair(15, "Agriculture" to "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=100&q=80")
             )
 
             FlowRow(
