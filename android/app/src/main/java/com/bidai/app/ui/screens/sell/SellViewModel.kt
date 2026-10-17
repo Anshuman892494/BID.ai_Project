@@ -21,13 +21,14 @@ sealed class SellUiState {
 }
 
 data class SellFormState(
-    val aiQuery: String = "iPhone 14 Pro 128GB",
+    val aiQuery: String = "",
     val title: String = "",
     val categoryId: Int = 2, // Mobiles
     val startingPrice: String = "",
     val condition: String = "Like New",
     val description: String = "",
-    val imageUrl: String = "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&q=80",
+    val imageUrls: List<String> = emptyList(), // Store multiple picked URIs
+    val imageUrl: String = "", // Used for final submission for now
     val estimatedEcoScore: Int = 75,
     val durationHours: Int = 24,
     val isAiFilled: Boolean = false,
@@ -66,6 +67,30 @@ class SellViewModel(private val context: Context) : ViewModel() {
 
     fun onDescriptionChange(value: String) {
         _formState.update { it.copy(description = value) }
+    }
+
+    fun onImagesSelected(urls: List<String>) {
+        _formState.update { 
+            // Also setting the first one as imageUrl for backend compatibility for now
+            val updatedUrls = (it.imageUrls + urls).take(5)
+            it.copy(
+                imageUrls = updatedUrls,
+                imageUrl = updatedUrls.firstOrNull() ?: ""
+            ) 
+        }
+    }
+
+    fun onRemoveImage(index: Int) {
+        _formState.update {
+            val newList = it.imageUrls.toMutableList()
+            if (index in newList.indices) {
+                newList.removeAt(index)
+            }
+            it.copy(
+                imageUrls = newList,
+                imageUrl = newList.firstOrNull() ?: ""
+            )
+        }
     }
 
     fun onImageUrlChange(url: String) {

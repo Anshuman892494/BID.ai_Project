@@ -1,6 +1,7 @@
 package com.bidai.app.ui.screens.home
 
 import androidx.compose.foundation.background
+import com.bidai.app.R
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.CheckCircle
@@ -366,18 +367,21 @@ fun HomeScreen(
                     )
 
                     val figmaCategories = listOf(
-                        Pair("Cars", "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=100&q=80"),
-                        Pair("Real Estate", "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=100&q=80"),
-                        Pair("Mobiles", "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100&q=80"),
-                        Pair("Jobs", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&q=80"),
-                        Pair("Bikes", "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=100&q=80"),
-                        Pair("Electronics", "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&q=80"),
-                        Pair("Home & Garden", "https://images.unsplash.com/photo-1580481077195-c3a82145d875?w=100&q=80"),
-                        Pair("Beauty", "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=100&q=80"),
-                        Pair("Clothing", "https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=100&q=80"),
-                        Pair("Books", "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=100&q=80"),
-                        Pair("Arts and Crafts", "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=100&q=80"),
-                        Pair("Services", "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=100&q=80")
+                        Pair("Cars", R.drawable.cars),
+                        Pair("Real Estate", R.drawable.realestate),
+                        Pair("Mobiles", R.drawable.mobile),
+                        Pair("Jobs", R.drawable.jobs),
+                        Pair("Bikes", R.drawable.bikes),
+                        Pair("Electronics", R.drawable.electronics),
+                        Pair("Home & Garden", R.drawable.homegarden),
+                        Pair("Beauty", R.drawable.beautyproducts),
+                        Pair("Clothing", R.drawable.clothing),
+                        Pair("Books", R.drawable.books),
+                        Pair("Arts and Crafts", R.drawable.artcraft),
+                        Pair("Services", R.drawable.services),
+                        Pair("General Service", R.drawable.generalscience),
+                        Pair("Yodha", R.drawable.yodha),
+                        Pair("Agriculture", R.drawable.agriculture)
                     )
 
                     FlowRow(
@@ -386,10 +390,10 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        figmaCategories.forEach { (catName, catImg) ->
+                        figmaCategories.forEach { (catName, catImgRes) ->
                             CategoryCircleItem(
                                 title = catName,
-                                imageUrl = catImg,
+                                imageRes = catImgRes,
                                 isSelected = uiState.selectedCategory == catName,
                                 onClick = { viewModel.onCategorySelect(catName) }
                             )
@@ -693,7 +697,7 @@ fun HomeScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = BidAiBlue, modifier = Modifier.size(28.dp))
+                                Icon(Icons.Default.AdsClick, contentDescription = null, tint = BidAiBlue, modifier = Modifier.size(28.dp))
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
                                     text = "Sell your unused\nitems in 30 seconds\nWith One click sell",

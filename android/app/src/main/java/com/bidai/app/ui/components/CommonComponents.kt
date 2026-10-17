@@ -20,7 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inventory
@@ -194,7 +194,7 @@ fun BidAiBottomNavBar(
         val navItems = listOf(
             Triple("home", "Home", Icons.Default.Home),
             Triple("sell", "Sell", Icons.Default.Store),
-            Triple("one_click", "One click sell", Icons.Default.AutoAwesome),
+            Triple("one_click", "One click sell", Icons.Default.AdsClick),
             Triple("chat", "Chat", Icons.AutoMirrored.Filled.Chat),
             Triple("items", "Your items", Icons.Default.Inventory)
         )
@@ -229,7 +229,7 @@ fun BidAiBottomNavBar(
 @Composable
 fun CategoryCircleItem(
     title: String,
-    imageUrl: String,
+    imageRes: Int,
     isSelected: Boolean = false,
     onClick: () -> Unit
 ) {
@@ -252,12 +252,13 @@ fun CategoryCircleItem(
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
-                model = imageUrl,
+                model = imageRes,
                 contentDescription = title,
                 modifier = Modifier
-                    .size(42.dp)
+                    .fillMaxSize()
+                    .padding(2.dp)
                     .clip(CircleShape),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
         }
         Spacer(modifier = Modifier.height(6.dp))
@@ -385,8 +386,23 @@ fun FigmaProductCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    // Fallback to "Bengaluru" if no location in model, else use location (assume model might not have location right now)
                     Text(text = "Bengaluru", fontSize = 10.sp, color = TextGray)
-                    Text(text = "25 July", fontSize = 10.sp, color = TextGray)
+                    
+                    // Format Ends At date if available
+                    val dateText = try {
+                        if (!product.endsAt.isNullOrEmpty()) {
+                            val parser = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+                            val formatter = java.text.SimpleDateFormat("dd MMM", java.util.Locale.getDefault())
+                            val date = parser.parse(product.endsAt)
+                            if (date != null) formatter.format(date) else "N/A"
+                        } else {
+                            "N/A"
+                        }
+                    } catch (e: Exception) {
+                        "N/A" // fallback on parsing error
+                    }
+                    Text(text = dateText, fontSize = 10.sp, color = TextGray)
                 }
             }
         }

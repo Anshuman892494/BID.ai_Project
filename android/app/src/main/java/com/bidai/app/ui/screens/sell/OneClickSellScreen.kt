@@ -1,6 +1,9 @@
 package com.bidai.app.ui.screens.sell
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import com.bidai.app.R
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,6 +45,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -84,10 +89,21 @@ fun OneClickSellScreen(
     val scrollState = rememberScrollState()
 
     var sellAsVendor by remember { mutableStateOf(true) }
-    var brandName by remember { mutableStateOf("Bajaj Pulsar") }
-    var productType by remember { mutableStateOf("Motorcycle") }
-    var location by remember { mutableStateOf("Bengaluru, Karnataka") }
+    var brandName by remember { mutableStateOf("") }
+    var productType by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5)
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            val urls = uris.map { it.toString() }
+            viewModel.onImagesSelected(urls)
+            // Trigger AI Autofill based on first image as placeholder feature
+            viewModel.triggerAiAutoFill()
+        }
+    }
 
     if (showSuccessDialog) {
         AlertDialog(
@@ -107,7 +123,7 @@ fun OneClickSellScreen(
             },
             title = {
                 Text(
-                    text = "Product Listed Successfully!",
+                    text = "Congratulations",
                     color = TextBlack,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
@@ -115,22 +131,20 @@ fun OneClickSellScreen(
             },
             text = {
                 Text(
-                    text = "Your listing is now live on Bid.ai auction feed. Verified buyers can now place bids.",
+                    text = "Your product get Approved and its live Now",
                     color = TextGray,
                     fontSize = 13.sp
                 )
             },
             confirmButton = {
-                Button(
+                TextButton(
                     onClick = {
                         showSuccessDialog = false
                         viewModel.resetState()
                         onListingSuccess()
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = BidAiBlue),
-                    shape = RoundedCornerShape(8.dp)
+                    }
                 ) {
-                    Text("Go to Home Feed", fontWeight = FontWeight.Bold)
+                    Text("Close", color = TextGray)
                 }
             }
         )
@@ -186,21 +200,21 @@ fun OneClickSellScreen(
             )
 
             val figmaCategories = listOf(
-                Pair(1, "Cars" to "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=100&q=80"),
-                Pair(2, "Real Estate" to "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=100&q=80"),
-                Pair(3, "Mobiles" to "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100&q=80"),
-                Pair(4, "Jobs" to "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&q=80"),
-                Pair(5, "Bikes" to "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=100&q=80"),
-                Pair(6, "Electronics" to "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&q=80"),
-                Pair(7, "Home & Garden" to "https://images.unsplash.com/photo-1580481077195-c3a82145d875?w=100&q=80"),
-                Pair(8, "Beauty" to "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=100&q=80"),
-                Pair(9, "Clothing" to "https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=100&q=80"),
-                Pair(10, "Books" to "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=100&q=80"),
-                Pair(11, "Arts and Crafts" to "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=100&q=80"),
-                Pair(12, "Services" to "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=100&q=80"),
-                Pair(13, "General Service" to "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100&q=80"),
-                Pair(14, "Yodha" to "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=100&q=80"),
-                Pair(15, "Agriculture" to "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=100&q=80")
+                Pair(1, "Cars" to R.drawable.cars),
+                Pair(2, "Real Estate" to R.drawable.realestate),
+                Pair(3, "Mobiles" to R.drawable.mobile),
+                Pair(4, "Jobs" to R.drawable.jobs),
+                Pair(5, "Bikes" to R.drawable.bikes),
+                Pair(6, "Electronics" to R.drawable.electronics),
+                Pair(7, "Home & Garden" to R.drawable.homegarden),
+                Pair(8, "Beauty" to R.drawable.beautyproducts),
+                Pair(9, "Clothing" to R.drawable.clothing),
+                Pair(10, "Books" to R.drawable.books),
+                Pair(11, "Arts and Crafts" to R.drawable.artcraft),
+                Pair(12, "Services" to R.drawable.services),
+                Pair(13, "General Service" to R.drawable.generalscience),
+                Pair(14, "Yodha" to R.drawable.yodha),
+                Pair(15, "Agriculture" to R.drawable.agriculture)
             )
 
             FlowRow(
@@ -210,10 +224,10 @@ fun OneClickSellScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 figmaCategories.forEach { (catId, pair) ->
-                    val (title, img) = pair
+                    val (title, imgRes) = pair
                     CategoryCircleItem(
                         title = title,
-                        imageUrl = img,
+                        imageRes = imgRes,
                         isSelected = form.categoryId == catId,
                         onClick = { viewModel.onCategoryChange(catId) }
                     )
@@ -244,18 +258,22 @@ fun OneClickSellScreen(
 
                     Button(
                         onClick = {
-                            // Cycle / auto-trigger photo and AI fill
-                            viewModel.triggerAiAutoFill()
+                            photoPickerLauncher.launch(
+                                androidx.activity.result.PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
+                            )
                         },
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = BidAiBlue),
                         modifier = Modifier.height(42.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.AutoAwesome, contentDescription = "AI", modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("Select or Take Photo", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                        }
+                        Text(
+                            text = "Select or Take Photo",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = PureWhite
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -268,47 +286,50 @@ fun OneClickSellScreen(
                 }
             }
 
-            // 3. PHOTO THUMBNAILS ROW (Image 5 from Figma)
-            Spacer(modifier = Modifier.height(14.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                val thumbnails = listOf(
-                    form.imageUrl,
-                    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=300&q=80"
-                )
 
-                for (imgUrl in thumbnails) {
-                    Card(
-                        modifier = Modifier
-                            .size(100.dp, 120.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = CardDefaults.cardColors(containerColor = BidAiBlue)
-                    ) {
-                        Column {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(BidAiBlue)
-                                    .padding(horizontal = 6.dp, vertical = 3.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("Photos", color = PureWhite, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete",
-                                    tint = PureWhite,
-                                    modifier = Modifier.size(14.dp)
+
+            // 3. PHOTO THUMBNAILS ROW (Image 5 from Figma)
+            if (form.imageUrls.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(14.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    form.imageUrls.forEachIndexed { index, imgUrl ->
+                        Card(
+                            modifier = Modifier
+                                .size(100.dp, 120.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = CardDefaults.cardColors(containerColor = BidAiBlue)
+                        ) {
+                            Column {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(BidAiBlue)
+                                        .padding(horizontal = 6.dp, vertical = 3.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("Photo", color = PureWhite, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete",
+                                        tint = PureWhite,
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .clickable { viewModel.onRemoveImage(index) }
+                                    )
+                                }
+                                AsyncImage(
+                                    model = android.net.Uri.parse(imgUrl),
+                                    contentDescription = "Thumb",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
                                 )
                             }
-                            AsyncImage(
-                                model = imgUrl,
-                                contentDescription = "Thumb",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
                         }
                     }
                 }
@@ -316,202 +337,189 @@ fun OneClickSellScreen(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // 4. SELL AS (Vendor / Business vs Individual)
-            Text(
-                text = "Sell as",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextBlack
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Vendor pill
+            if (form.imageUrls.isNotEmpty()) {
+                // 4. SELL AS (Vendor / Business vs Individual)
+                Text(
+                    text = "Sell as",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextBlack
+                )
+                Spacer(modifier = Modifier.height(6.dp))
                 Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, if (sellAsVendor) BidAiBlue else BorderColor, RoundedCornerShape(8.dp))
-                        .clickable { sellAsVendor = true }
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    RadioButton(
-                        selected = sellAsVendor,
-                        onClick = { sellAsVendor = true },
-                        colors = RadioButtonDefaults.colors(selectedColor = BidAiBlue)
-                    )
-                    Text("vendor / Business", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = TextBlack)
+                    // Vendor pill
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .border(1.dp, if (sellAsVendor) BidAiBlue else BorderColor, RoundedCornerShape(8.dp))
+                            .clickable { sellAsVendor = true }
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = sellAsVendor,
+                            onClick = { sellAsVendor = true },
+                            colors = RadioButtonDefaults.colors(selectedColor = BidAiBlue)
+                        )
+                        Text("vendor / Business", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = TextBlack)
+                    }
+
+                    // Individual pill
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .border(1.dp, if (!sellAsVendor) BidAiBlue else BorderColor, RoundedCornerShape(8.dp))
+                            .clickable { sellAsVendor = false }
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = !sellAsVendor,
+                            onClick = { sellAsVendor = false },
+                            colors = RadioButtonDefaults.colors(selectedColor = BidAiBlue)
+                        )
+                        Text("Individual", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = TextBlack)
+                    }
                 }
 
-                // Individual pill
-                Row(
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 5. BRAND
+                Text(text = "Brand", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = brandName,
+                    onValueChange = { brandName = it },
+                    placeholder = { Text("Enter Brands", color = TextLightGray, fontSize = 13.sp) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BidAiBlue,
+                        unfocusedBorderColor = BorderColor
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 6. SELECT PRODUCT TYPE
+                Text(text = "Select Product Type", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = productType,
+                    onValueChange = { productType = it },
+                    placeholder = { Text("Type", color = TextLightGray, fontSize = 13.sp) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BidAiBlue,
+                        unfocusedBorderColor = BorderColor
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 7. AD TITLE
+                Text(text = "Ad Title", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = form.title,
+                    onValueChange = { viewModel.onTitleChange(it) },
+                    placeholder = { Text("Enter Title", color = TextLightGray, fontSize = 13.sp) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BidAiBlue,
+                        unfocusedBorderColor = BorderColor
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 8. DESCRIPTION
+                Text(text = "Description", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = form.description,
+                    onValueChange = { viewModel.onDescriptionChange(it) },
+                    placeholder = { Text("Enter detailed description...", color = TextLightGray, fontSize = 13.sp) },
+                    minLines = 3,
+                    maxLines = 5,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BidAiBlue,
+                        unfocusedBorderColor = BorderColor
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 9. PRICE
+                Text(text = "Price", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = form.startingPrice,
+                    onValueChange = { viewModel.onPriceChange(it) },
+                    placeholder = { Text("Enter price", color = TextLightGray, fontSize = 13.sp) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BidAiBlue,
+                        unfocusedBorderColor = BorderColor
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 10. LOCATION
+                Text(text = "Location", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = location,
+                    onValueChange = { location = it },
+                    placeholder = { Text("Enter Location", color = TextLightGray, fontSize = 13.sp) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = BidAiBlue,
+                        unfocusedBorderColor = BorderColor
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 11. UPLOAD BUTTON (Blue Pill)
+                val isSubmitting = uiState is SellUiState.Submitting
+
+                Button(
+                    onClick = {
+                        viewModel.submitListing {
+                            showSuccessDialog = true
+                        }
+                    },
                     modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, if (!sellAsVendor) BidAiBlue else BorderColor, RoundedCornerShape(8.dp))
-                        .clickable { sellAsVendor = false }
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BidAiBlue),
+                    shape = RoundedCornerShape(8.dp),
+                    enabled = !isSubmitting
                 ) {
-                    RadioButton(
-                        selected = !sellAsVendor,
-                        onClick = { sellAsVendor = false },
-                        colors = RadioButtonDefaults.colors(selectedColor = BidAiBlue)
-                    )
-                    Text("Individual", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = TextBlack)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // 5. BRANDS
-            Text(text = "Brands", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = brandName,
-                onValueChange = { brandName = it },
-                placeholder = { Text("Enter Brands", color = TextLightGray, fontSize = 13.sp) },
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BidAiBlue,
-                    unfocusedBorderColor = BorderColor
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 6. SELECT PRODUCT TYPE
-            Text(text = "Select Product Type", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = productType,
-                onValueChange = { productType = it },
-                placeholder = { Text("Type", color = TextLightGray, fontSize = 13.sp) },
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BidAiBlue,
-                    unfocusedBorderColor = BorderColor
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 7. AD TITLE
-            Text(text = "Ad Title", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = form.title,
-                onValueChange = { viewModel.onTitleChange(it) },
-                placeholder = { Text("Enter Title", color = TextLightGray, fontSize = 13.sp) },
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BidAiBlue,
-                    unfocusedBorderColor = BorderColor
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 8. DESCRIPTION
-            Text(text = "Description", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = form.description,
-                onValueChange = { viewModel.onDescriptionChange(it) },
-                placeholder = { Text("Enter detailed description...", color = TextLightGray, fontSize = 13.sp) },
-                minLines = 3,
-                maxLines = 5,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BidAiBlue,
-                    unfocusedBorderColor = BorderColor
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 9. PRICE
-            Text(text = "Price", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = form.startingPrice,
-                onValueChange = { viewModel.onPriceChange(it) },
-                placeholder = { Text("Enter price", color = TextLightGray, fontSize = 13.sp) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BidAiBlue,
-                    unfocusedBorderColor = BorderColor
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 10. LOCATION
-            Text(text = "Location", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextBlack)
-            Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = location,
-                onValueChange = { location = it },
-                placeholder = { Text("Enter Location", color = TextLightGray, fontSize = 13.sp) },
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = BidAiBlue,
-                    unfocusedBorderColor = BorderColor
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // 11. UPLOAD BUTTON (Blue Pill)
-            val isSubmitting = uiState is SellUiState.Submitting
-
-            Button(
-                onClick = {
-                    if (form.title.isBlank()) {
-                        viewModel.onTitleChange("$brandName $productType")
+                    if (isSubmitting) {
+                        CircularProgressIndicator(color = PureWhite, modifier = Modifier.size(24.dp))
+                    } else {
+                        Text("Upload", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = PureWhite)
                     }
-                    if (form.startingPrice.isBlank()) {
-                        viewModel.onPriceChange("56000")
-                    }
-                    viewModel.submitListing {
-                        showSuccessDialog = true
-                    }
-                },
-                enabled = !isSubmitting,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BidAiBlue)
-            ) {
-                if (isSubmitting) {
-                    CircularProgressIndicator(
-                        color = PureWhite,
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text(
-                        text = "Upload",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = PureWhite
-                    )
                 }
             }
 
