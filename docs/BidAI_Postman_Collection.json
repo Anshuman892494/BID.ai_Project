@@ -1,0 +1,195 @@
+{
+  "info": {
+    "_postman_id": "b1da1-7788-4a99-b1d0-998877665544",
+    "name": "Bid.ai REST APIs Collection",
+    "description": "Complete Postman collection for Bid.ai technical evaluation. Covers Auth, Products Feed, Bid Placement, and One-Click AI Suggestion.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Register New User",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Anshuman Sharma\",\n  \"email\": \"anshuman@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+919876543210\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.data && jsonData.data.token) {",
+              "    pm.collectionVariables.set('authToken', jsonData.data.token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo@bid.ai\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{authToken}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/profile",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "profile"]
+        }
+      }
+    },
+    {
+      "name": "Products - Get Categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products/categories",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products", "categories"]
+        }
+      }
+    },
+    {
+      "name": "Products - Get Feed (All)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "Products - Search & Filter Feed",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products?category=Mobiles&search=iPhone&sort=endingSoon",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"],
+          "query": [
+            { "key": "category", "value": "Mobiles" },
+            { "key": "search", "value": "iPhone" },
+            { "key": "sort", "value": "endingSoon" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Products - One-Click AI Suggestion",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"MacBook Pro M3 16gb\",\n  \"condition\": \"Like New\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/products/ai-suggest",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products", "ai-suggest"]
+        }
+      }
+    },
+    {
+      "name": "Products - Create Listing (One-Click Sell)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{authToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Apple iPhone 15 Pro (128 GB)\",\n  \"categoryId\": 2,\n  \"startingPrice\": 65000,\n  \"condition\": \"Like New\",\n  \"imageUrl\": \"https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&q=80\",\n  \"description\": \"Pristine condition phone, ready for auction.\",\n  \"estimatedEcoScore\": 85,\n  \"durationHours\": 24\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "Products - Place a Bid",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{authToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 76000\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/products/p0000000-0000-0000-0000-000000000001/bid",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products", "p0000000-0000-0000-0000-000000000001", "bid"]
+        }
+      }
+    }
+  ]
+}
