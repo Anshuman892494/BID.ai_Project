@@ -179,6 +179,23 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                if (uiState is AuthUiState.Error) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFFFEBEE), shape = RoundedCornerShape(8.dp))
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            text = (uiState as AuthUiState.Error).message,
+                            color = Color(0xFFC62828),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                }
+
                 // Sign Up Action Button
                 val isLoading = uiState is AuthUiState.Loading
 
@@ -280,7 +297,24 @@ fun LoginScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+
+                if (uiState is AuthUiState.Error) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFFFEBEE), shape = RoundedCornerShape(8.dp))
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            text = (uiState as AuthUiState.Error).message,
+                            color = Color(0xFFC62828),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                }
 
                 // Sign In Action Button
                 val isLoading = uiState is AuthUiState.Loading

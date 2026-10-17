@@ -9,6 +9,7 @@ import com.bidai.app.data.model.User
 import com.bidai.app.utils.TokenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 class AuthRepository(private val context: Context) {
     private val apiService: ApiService = ApiClient.getService(context)
@@ -32,8 +33,12 @@ class AuthRepository(private val context: Context) {
                 }
                 Result.success(authRes)
             } else {
-                // Mock fallback if local server is down or returns error
-                mockLoginSuccess(email)
+                val errorMsg = parseErrorMessage(response.errorBody()?.string())
+                if (!errorMsg.isNullOrBlank()) {
+                    Result.failure(Exception(errorMsg))
+                } else {
+                    mockLoginSuccess(email)
+                }
             }
         } catch (e: Exception) {
             // Smooth offline mock login for evaluation
@@ -89,10 +94,25 @@ class AuthRepository(private val context: Context) {
                 }
                 Result.success(authRes)
             } else {
-                mockRegisterSuccess(fullName, email, phone)
+                val errorMsg = parseErrorMessage(response.errorBody()?.string())
+                if (!errorMsg.isNullOrBlank()) {
+                    Result.failure(Exception(errorMsg))
+                } else {
+                    mockRegisterSuccess(fullName, email, phone)
+                }
             }
         } catch (e: Exception) {
             mockRegisterSuccess(fullName, email, phone)
+        }
+    }
+
+    private fun parseErrorMessage(jsonStr: String?): String? {
+        if (jsonStr.isNullOrBlank()) return null
+        return try {
+            val obj = JSONObject(jsonStr)
+            if (obj.has("message")) obj.getString("message") else null
+        } catch (e: Exception) {
+            null
         }
     }
 
@@ -126,4 +146,5 @@ class AuthRepository(private val context: Context) {
         tokenManager.clearAuth()
     }
 }
+
 
